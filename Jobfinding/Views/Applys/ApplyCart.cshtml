@@ -1,0 +1,160 @@
+﻿@using Jobfinding.Data.ViewModels;
+@model ApplyCartVM
+
+@{
+    ViewData["Title"] = "Apply cart summary";
+}
+
+<style>
+    .apply-summary-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .apply-summary-title {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .apply-summary-table {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+        .apply-summary-table th {
+            font-weight: bold;
+        }
+
+        .apply-summary-table td {
+            vertical-align: middle;
+        }
+
+    .apply-summary-actions {
+        text-align: right;
+        margin-top: 30px;
+    }
+
+        .apply-summary-actions .btn-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+            .apply-summary-actions .btn-group > * {
+                margin-left: 10px;
+            }
+
+    .paypal-button-container {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .add-jobs-button {
+        display: inline-block;
+        background-color: #23b5b5;
+        color: #fff;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6 offset-3 apply-summary-container">
+        <div class="apply-summary-title">
+            <h2>Your Apply Summary</h2>
+        </div>
+
+        <table class="apply-summary-table">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Jobs</th>
+                    <th>Fees</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ApplyCart.ApplyCartItems)
+                {
+                    <tr>
+                        <td>@item.Amount</td>
+                        <td>@item.Findjobs.Name</td>
+                        <td>@((item.Findjobs.Salary * 10 / 100).ToString("c"))</td>
+                        <td>@((item.Amount * item.Findjobs.Salary * 10 / 100).ToString("c"))</td>
+                        <td>
+                            <a class="text-danger" asp-controller="Applys" asp-action="RemoveItemFromApplyCart" asp-route-id="@item.Findjobs.Id">
+                                <i class="bi bi-cart-dash"></i>
+                            </a>
+                            |
+                            <a class="text-success" asp-controller="Applys" asp-action="AddItemToApplyCart" asp-route-id="@item.Findjobs.Id">
+                                <i class="bi bi-cart-plus"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2"></td>
+                    <td><b>Total:</b></td>
+                    <td>@Model.ApplyCartTotal.ToString("c")</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="apply-summary-actions">
+            <div class="btn-group">
+                <div class="paypal-button-container" id="paypal-btn"></div>
+                <span style="padding-right: 10px;"></span>
+                <a class="btn btn-outline-success add-jobs-button" asp-controller="FindJobs" asp-action="Index">Add Jobs</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
+    <script>
+        let _total = @Html.Raw(Model.ApplyCartTotal);
+        paypal.Button.render({
+             
+            env: 'sandbox',
+            client: {
+                sandbox: 'AQXs9T0q6JfdPGE0aE3YuW3nvhEG_f8eH7Csxyi7cN62NWoqJMEQt1M8cdhT6VQsQ-qnU98-2SL8ebsX'
+            },
+
+            
+            locale: 'en_US',
+            style: {
+                size: 'small',
+                color: 'gold',
+                shape: 'pill'
+            },
+            commit: true,
+
+           
+            payment: function (data, actions) {
+               return actions.payment.create({
+                   transactions: [{
+                       amount: {
+                           total: _total,
+                           currency: 'USD'
+                       }
+                   }]
+               });
+            },
+
+            //Execute the payment
+            onAuthorize: function (data, actions) {
+                return actions.payment.execute().then(function () {
+                    var url = '@Url.Action("CompleteApply", "Applys", new { })';
+                    window.location.href = url;
+                })
+            }
+
+        }, '#paypal-btn')
+    </script>
+}

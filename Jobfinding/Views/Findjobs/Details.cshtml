@@ -1,0 +1,118 @@
+﻿@model Findjobs
+@{
+    ViewData["Title"] = "Jobs details";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css" integrity="sha512-LUhLzcnVEZh7D2p6XeAmXSyZjtCwCu4aY3Q4T/yvGxNNRSH9fJ6o9np5Xnpgv09Zr6aOaWnRZDJz/Z94W4ip1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .smaller-image {
+            max-width: 200px; /* Adjust the value as per your preference */
+            height: auto;
+        }
+
+        .card {
+            padding: 1.5rem;
+        }
+
+        .card-footer {
+            padding: 1.5rem;
+        }
+
+        .vertical-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-8 offset-2">
+            <div class="card mb-12">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="card-header text-white bg-info">
+                            <p class="card-text">
+                                <h5 class="card-title">
+                                    @Model.Name
+                                </h5>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 vertical-center">
+                        <img src="@Model.ImageURL" class="img-fluid smaller-image" alt="@Model.Name">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <p class="card-text">@Model.Description</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="card-text">
+                                        <b>Job: </b>
+                                        <a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.JobsId">
+                                            @Model.Jobs.Name
+                                        </a>
+                                    </p>
+                                    <p class="card-text"><b>Category: </b>@Model.JobCategory</p>
+                                    <p class="card-text"><b>Salary: </b>@Model.Salary.ToString("c")</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text"><b>Start Date: </b>@Model.Startdate.ToString("dd MMM yy")</p>
+                                    <p class="card-text"><b>End Date: </b>@Model.Enddate.ToString("dd MMM yy")</p>
+                                    <p class="card-text">
+                                        <b>Status: </b>
+                                        @if (DateTime.Now >= Model.Startdate && DateTime.Now <= Model.Enddate)
+                                        {
+                                            <span class="badge bg-success text-white">AVAILABLE</span>
+                                        }
+                                        else if (DateTime.Now > Model.Enddate)
+                                        {
+                                            <span class="badge bg-danger text-white">EXPIRED</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-primary text-white">UPCOMING</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                <b>Skills: </b>
+                                <hr />
+                                <div class="row">
+                                    @foreach (var skill in Model.skills_Findingjobs)
+                                    {
+                                        <div class="col-md-3">
+                                            <img src="@skill.Skill.ImageURL" style="max-width: 100%;" />
+                                            <br />
+                                            <a asp-controller="Skill" asp-action="Details" asp-route-id="@skill.SkillId">@skill.Skill.Name</a>
+                                        </div>
+                                    }
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card-footer">
+                            <p class="card-text">
+                                <a class="btn btn-outline-primary float-right" asp-action="Index">
+                                    Back to List
+                                </a>
+                                <a class="btn btn-success text-white @((DateTime.Now > Model.Enddate) ? "disabled" : "")"
+                                   asp-controller="Applys"
+                                   asp-action="AddItemToApplyCart" asp-route-id="@Model.Id"> Apply Fee @((Model.Salary/10).ToString("c"))</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js" integrity="sha512-p4PhTw5JNKdmmN82S6feoLbmkJsHt9MTJLeb2bA9g6bL1RnKY3QWdxK0Z7u8IN6dFUhUe5KOkT+HTPTyDWU7GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+﻿@model string
+
+@if (User.Identity.IsAuthenticated && User.IsInRole("Employer"))
+                            {
+<div style="position: fixed; right: 25px; bottom: 25px;">
+    <a asp-controller="@Model" asp-action="Create" class="btn btn-success" style="border-radius: 50%; width: 60px; height: 60px; padding: 12px; display: flex; justify-content: center; align-items: center; background-color: #5cb85c; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); color: white;">
+        <i class="bi bi-plus-circle" style="font-size: 24px;"></i>
+    </a>
+</div>
+                            }

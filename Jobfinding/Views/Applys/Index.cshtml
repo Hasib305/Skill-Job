@@ -1,0 +1,116 @@
+﻿@model List<Apply>
+
+@{
+    ViewData["Title"] = "All Applications";
+}
+
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+        .table th,
+        .table td {
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+    .alert {
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 10px;
+    }
+
+        .badge.bg-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+    h4 {
+        margin-top: 0;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-2">
+            <p>
+                <h4>List of All Applications</h4>
+            </p>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Apply ID</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Employer"))
+                        {
+                            <th>User</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var apply in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">@apply.Id</td>
+                            <td class="align-middle">
+                                <ul style="list-style-type:none">
+                                    @foreach (var item in apply.applyitems)
+                                    {
+                                        <li>
+                                            <div class="alert alert-info" role="alert">
+                                                <span class="badge bg-success">@item.Amount</span> [@item.Fee.ToString("c")] - @item.Findjobs.Name
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                            <td class="align-middle">
+                                @apply.applyitems.Select(m => m.Fee * m.Amount).Sum().ToString("c")
+                            </td>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Employer"))
+                            {
+                                <td class="align-middle">@apply.User.FullName</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

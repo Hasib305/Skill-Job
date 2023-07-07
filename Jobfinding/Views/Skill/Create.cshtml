@@ -1,0 +1,56 @@
+﻿@model Skill
+
+@{
+    ViewData["Title"] = "Add a new Skill";
+}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1 class="text-center">Add a Skill</h1>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form asp-action="Create" class="needs-validation">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group text-center">
+                        <img id="ImageURLPreview" class="border-info rounded-circle" style="max-width: 150px" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ImageURL" class="control-label">Image</label>
+                        <input asp-for="ImageURL" class="form-control" required />
+                        <span asp-validation-for="ImageURL" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label">Skills</label>
+                        <input asp-for="Name" class="form-control" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Info" class="control-label">Details</label>
+                        <textarea asp-for="Info" class="form-control" rows="5" required></textarea>
+                        <span asp-validation-for="Info" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <button type="submit" class="btn btn-outline-success float-end">Create</button>
+                        <a class="btn btn-outline-secondary me-2" asp-action="Index">Show All</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function(){
+            var output = document.getElementById('ImageURLPreview');
+            output.src = $("#ImageURL").val(); 
+        })
+        $("#ImageURL").on("change", function () {
+            var output = document.getElementById('ImageURLPreview');
+            output.src = $(this).val();
+        })
+    </script>
+}

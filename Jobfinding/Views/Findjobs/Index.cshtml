@@ -1,0 +1,160 @@
+﻿@model IEnumerable<Findjobs>
+
+@{
+    ViewData["Title"] = "List of Current Jobs";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css" integrity="sha512-LUhLzcnVEZh7D2p6XeAmXSyZjtCwCu4aY3Q4T/yvGxNNRSH9fJ6o9np5Xnpgv09Zr6aOaWnRZDJz/Z94W4ip1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" integrity="sha512-0xuwqbxqUS+GJZqm2yj/kSGKT4v7nBbjsnStUBjTqvmxrJ6azgvk+R5pvsVDFKd6SXlU1EmxklSD0bTWRtuBlw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .job-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+            .job-card:hover {
+                box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-text {
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 2rem;
+        }
+
+        .btn-details {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-test {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin-bottom: 50px;
+        }
+
+        .row.mb-3 {
+            margin-bottom: 20px;
+        }
+
+    
+        .job-card .col-md-4 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .job-card img {
+            display: block;
+            margin: auto;
+            max-height: 100px;
+            max-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="alert alert-primary mt-3" role="alert">
+                Welcome, @Context.Session.GetString("UserName")!
+            </div>
+        }
+        @foreach (var item in Model)
+        {
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="card h-100 job-card">
+                        <div class="card-header">
+                            <h5 class="card-title d-flex justify-content-between align-items-center">
+                                <span>@item.Name</span>
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Employer"))
+                                {
+                                    <a class="text-decoration-none text-secondary" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                                }
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img src="@item.ImageURL" class="img-fluid" alt="@item.Name">
+                                    <p class="card-text">@item.Description</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="card-text"><b>Job: </b>@item.Jobs.Name</p>
+                                    <p class="card-text"><b>Category: </b>@item.JobCategory</p>
+                                    <p class="card-text"><b>Salary: </b>@item.Salary</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="card-text"><b>Start Date: </b>@item.Startdate.ToString("dd MMM yy")</p>
+                                    <p class="card-text"><b>End Date: </b>@item.Enddate.ToString("dd MMM yy")</p>
+                                    <p class="card-text">
+                                        <b>Status: </b>
+                                        @if (DateTime.Now >= item.Startdate && DateTime.Now <= item.Enddate)
+                                        {
+                                            <span class="badge bg-success text-white">AVAILABLE</span>
+                                        }
+                                        else if (DateTime.Now > item.Enddate)
+                                        {
+                                            <span class="badge bg-danger text-white">EXPIRED</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-primary text-white">UPCOMING</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a class="btn btn-outline-primary btn-details" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye-fill"></i> Show Details</a>
+                                @if (User.Identity.IsAuthenticated && User.IsInRole("Seeker"))
+                                {
+                                    <a class="btn btn-danger btn-test @((DateTime.Now > item.Enddate) ? "disabled" : "")" asp-controller="Applys" asp-action="AddItemToApplyCart" asp-route-id="@item.Id">
+                                        <i class="bi bi-question-circle"></i> Apply for Job
+                                </a>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="container">
+        @await Html.PartialAsync("_CreateItem", "Findjobs")
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.bundle.min.js" integrity="sha512-LOsdavpWDEZ94LmdBN6J1BgoT2nZSv0ijMO6sMo8bcQw5BfpmPBMbR9Oqnc68EFQF95ptT//kJW6Brqy/4ghZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

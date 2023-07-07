@@ -1,0 +1,55 @@
+﻿@inject UserManager<ApplicationUser> UserManager;
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="d-flex">
+        <a class="btn btn-outline-success me-2" asp-controller="Account" asp-action="Login">
+        <i class="bi bi-box-arrow-in-right"></i> Login
+    </a>
+
+        <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Register">
+        <i class="bi bi-person-plus"></i> SignUp
+    </a>
+    </div>
+}
+else
+{
+    <div class="d-flex">
+        <div class="dropdown me-2">
+        <button class="btn btn-outline-success dropdown-toggle" type="button" id="profile-btn" data-bs-toggle="dropdown" aria-expanded="false">
+          @UserManager.GetUserName(User)
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="profile-btn">
+            <li>
+                <a class="dropdown-item" asp-controller="Applys" asp-action="Index">
+                    <i class="bi bi-list"></i> Applications
+                </a>
+            </li>
+            @if (User.IsInRole("Employer"))
+            {
+                <li>
+                    <a class="dropdown-item" asp-controller="Account" asp-action="Users">
+                        <i class="bi bi-people"></i> Seekers
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <form asp-controller="Account" asp-action="Logout">
+            <button class="btn btn-outline-danger">
+            Log out
+        </button>
+    </form>
+    </div>
+}
+
+<style>
+    .dropdown-menu {
+        padding: 0;
+    }
+
+    .dropdown-item {
+        padding: 0.5rem 1.5rem;
+}
+</style>

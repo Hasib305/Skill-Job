@@ -1,0 +1,65 @@
+﻿@model IEnumerable<ApplicationUser>
+@{
+    ViewData["Title"] = "List of All Users";
+}
+
+<style>
+    .table-container {
+        margin-top: 20px;
+    }
+
+    .table {
+        font-size: 14px;
+        border: 1px solid #dee2e6;
+    }
+
+        .table thead th {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+        }
+
+    .text-center {
+        text-align: center;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="table-container">
+            <h4>List of All Users</h4>
+
+            <table class="table">
+                <thead>
+                    <tr class="text-center">
+                        <th>Full Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => item.FullName)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => item.UserName)
+                            </td>
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

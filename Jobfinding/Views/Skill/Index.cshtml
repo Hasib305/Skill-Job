@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Skill>
+
+@{
+    ViewData["Title"] = "List of Skills";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+
+            <table class="table table-custom">
+                <thead class="text-center">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.ImageURL)</th>
+                        <th>@Html.DisplayNameFor(model => model.Name)</th>
+                        <th>@Html.DisplayNameFor(model => model.Info)</th>
+                        
+                            <th>Actions</th>
+                        
+                       
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="table-row">
+                            <td class="text-center align-middle border-bottom-0">
+                                <img class="rounded" src="@item.ImageURL" alt="@item.Name" style="max-width: 150px" />
+                            </td>
+                            <td class="align-middle border-bottom-0">
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td class="align-middle border-bottom-0">
+                                @Html.DisplayFor(modelItem => item.Info)
+                            </td>
+
+                           
+                                <td class="align-middle border-bottom-0">
+                                    <div class="btn-group" role="group">
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("Employer"))
+                                    {
+                                        <a class="btn btn-outline-primary me-2" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i> Edit</a>
+                                    }
+                                    <a class="btn btn-outline-info me-2" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye"></i> Details</a>
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("Employer"))
+                                    {
+                                        <a class="btn btn-danger text-white me-2" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash"></i> Delete</a>
+                                    }
+                                </div>
+                                </td>
+                                
+                            
+                         
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @await Html.PartialAsync("_CreateItem","Skill")
+</div>
+
+<style>
+    .table-custom th {
+        border-top: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table-custom td {
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+        .table-custom td:last-child,
+        .table-custom th:last-child {
+            border-right: none;
+        }
+
+    .table-row {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: box-shadow 0.3s ease;
+    }
+
+        .table-row:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+</style>
